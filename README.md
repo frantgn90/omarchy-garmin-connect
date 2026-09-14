@@ -1,8 +1,9 @@
 # jfmarve.garmin — Garmin Connect widget for Omarchy
 
-Shows today's step count in the [Omarchy](https://omarchy.org/) bar (with
-goal, calories, and resting heart rate in the tooltip), pulled from your
-Garmin Connect data.
+Shows today's step count in the [Omarchy](https://omarchy.org/) bar. Click
+it for a details panel with steps, floors, Body Battery, weekly intensity
+minutes, calories, resting heart rate, and stress — pulled from your Garmin
+Connect data.
 
 Uses the unofficial [`garminconnect`](https://github.com/cyberjunky/python-garminconnect)
 library. There is no simple official public API for personal use: Garmin
@@ -41,9 +42,12 @@ if not, run `omarchy restart shell`.
 
 ## Usage
 
-- **Left / right click**: opens Garmin Connect in your browser.
+- **Left click**: opens a details panel — steps, floors climbed and Body
+  Battery each get a progress bar against their daily goal (or 0–100 for
+  Body Battery); weekly intensity minutes get one against the weekly goal;
+  calories, resting heart rate and stress are shown as plain text.
+- **Right click**: opens Garmin Connect in your browser.
 - **Middle click**: forces an immediate refresh.
-- **Hover**: tooltip with steps/goal, calories, and resting heart rate.
 - Refreshes on its own every 15 minutes.
 
 ### When the session expires
