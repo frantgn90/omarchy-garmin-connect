@@ -128,7 +128,7 @@ BarWidget {
         spacing: Style.space(4)
 
         Text {
-          text: "Steps: " + root.steps + " / " + root.goal
+          text: "👣 Steps: " + root.steps + " / " + root.goal
           color: Color.popups.text
           font.family: root.bar ? root.bar.fontFamily : Style.font.family
           font.pixelSize: Style.font.caption
@@ -154,7 +154,7 @@ BarWidget {
       }
 
       Text {
-        text: "Calories: " + root.calories + " kcal"
+        text: "🔥 Calories: " + root.calories + " kcal"
         color: Color.popups.text
         font.family: root.bar ? root.bar.fontFamily : Style.font.family
         font.pixelSize: Style.font.caption
@@ -162,7 +162,7 @@ BarWidget {
 
       Text {
         visible: root.restingHr !== null && root.restingHr !== undefined
-        text: "Resting HR: " + root.restingHr + " bpm"
+        text: "❤ Resting HR: " + root.restingHr + " bpm"
         color: Color.popups.text
         font.family: root.bar ? root.bar.fontFamily : Style.font.family
         font.pixelSize: Style.font.caption
