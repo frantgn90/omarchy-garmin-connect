@@ -85,10 +85,10 @@ BarWidget {
     fontSize: Style.font.caption
     horizontalMargin: 6
     tooltipText: root.needsLogin
-      ? "Sesion de Garmin caducada. Clic para reautenticar (se abrira una terminal)."
-      : "Pasos: " + root.steps + " / " + root.goal
-        + "\nCalorias: " + root.calories + " kcal"
-        + (root.restingHr ? ("\nFC reposo: " + root.restingHr + " ppm") : "")
+      ? "Garmin session expired. Click to re-authenticate (a terminal will open)."
+      : "Steps: " + root.steps + " / " + root.goal
+        + "\nCalories: " + root.calories + " kcal"
+        + (root.restingHr ? ("\nResting HR: " + root.restingHr + " bpm") : "")
     onPressed: function(b) {
       if (root.needsLogin) { root.reLogin(); return }
       if (b === Qt.MiddleButton) root.refresh()

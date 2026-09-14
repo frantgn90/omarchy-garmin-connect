@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
-"""Lee el resumen diario de Garmin Connect usando el token de sesión guardado.
+"""Reads today's Garmin Connect summary using the saved session token.
 
-No pide credenciales: pensado para invocarse de forma no interactiva (p. ej.
-desde un widget de la barra). Si no hay token válido, sale con código 1 y
-un JSON {"error": "..."} en stdout, para que el llamador lo distinga.
+Does not ask for credentials: meant to be invoked non-interactively (e.g.
+from a bar widget). If there is no valid token, it exits with code 1 (or 2
+for an authentication failure) and a JSON {"error": "..."} on stdout, so the
+caller can tell the difference.
 
-Uso:
-    garmin_status.py            # imprime JSON con steps/goal/calories/...
-    garmin_status.py --summary  # imprime un resumen legible en varias líneas
+Usage:
+    garmin_status.py            # prints JSON with steps/goal/calories/...
+    garmin_status.py --summary  # prints a human-readable multi-line summary
 """
 import datetime
 import json
@@ -43,10 +44,10 @@ def main():
     }
 
     if "--summary" in sys.argv:
-        lines = [f"Pasos: {data['steps']} / {data['goal']}",
-                 f"Calorias: {data['calories']} kcal"]
+        lines = [f"Steps: {data['steps']} / {data['goal']}",
+                 f"Calories: {data['calories']} kcal"]
         if data["restingHr"]:
-            lines.append(f"FC reposo: {data['restingHr']} ppm")
+            lines.append(f"Resting HR: {data['restingHr']} bpm")
         print("\n".join(lines))
     else:
         print(json.dumps(data))

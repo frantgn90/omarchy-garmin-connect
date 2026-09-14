@@ -4,7 +4,7 @@
   "name": "Garmin",
   "version": "1.0.0",
   "author": "jfmarve",
-  "description": "Pasos, calorias y frecuencia cardiaca en reposo desde Garmin Connect",
+  "description": "Steps, calories and resting heart rate from Garmin Connect",
   "kinds": [
     "bar-widget"
   ],
@@ -13,7 +13,7 @@
   },
   "barWidget": {
     "displayName": "Garmin",
-    "description": "Pasos, calorias y frecuencia cardiaca en reposo desde Garmin Connect",
+    "description": "Steps, calories and resting heart rate from Garmin Connect",
     "category": "Info",
     "allowMultiple": false
   }

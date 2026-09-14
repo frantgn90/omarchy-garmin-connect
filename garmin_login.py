@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
-"""Login interactivo/reautenticación para el widget de Garmin de Omarchy.
+"""Interactive login/re-authentication for the Omarchy Garmin widget.
 
-Uso:
+Usage:
     ./garmin-login
 
-Pide email y contraseña (con getpass, nunca se muestran en pantalla ni se
-guardan en disco) y, si la cuenta lo requiere, un código MFA. Al terminar
-guarda un token de sesión OAuth en ~/.garminconnect para que garmin-status
-pueda leer datos sin volver a pedir credenciales. Se lanza automáticamente
-desde el propio widget de la barra cuando detecta que la sesión ha caducado.
+Asks for your email and password (via getpass, never shown on screen or
+saved to disk) and, if your account requires it, an MFA code. On success it
+saves an OAuth session token to ~/.garminconnect so that garmin-status can
+read data without asking for credentials again. This is launched
+automatically from the bar widget itself when it detects the session has
+expired.
 """
 import datetime
 import getpass
@@ -22,7 +23,7 @@ TOKEN_DIR = "~/.garminconnect"
 
 
 def prompt_mfa():
-    return input("Código MFA recibido (email/SMS): ")
+    return input("MFA code received (email/SMS): ")
 
 
 def login():
@@ -30,16 +31,16 @@ def login():
         try:
             client = garminconnect.Garmin(prompt_mfa=prompt_mfa)
             client.login(TOKEN_DIR)
-            print("Sesión reanudada desde token guardado.")
+            print("Session resumed from saved token.")
             return client
         except Exception as e:
-            print(f"No se pudo reanudar el token ({e}), pidiendo login de nuevo.")
+            print(f"Could not resume token ({e}), asking to log in again.")
 
-    email = input("Email de Garmin Connect: ")
-    password = getpass.getpass("Contraseña: ")
+    email = input("Garmin Connect email: ")
+    password = getpass.getpass("Password: ")
     client = garminconnect.Garmin(email, password, prompt_mfa=prompt_mfa)
     client.login(TOKEN_DIR)
-    print("Login OK, token guardado en", TOKEN_DIR)
+    print("Login OK, token saved to", TOKEN_DIR)
     return client
 
 
@@ -48,9 +49,9 @@ def main():
 
     today = datetime.date.today().isoformat()
 
-    print("\n--- Resumen del día ---")
+    print("\n--- Today's summary ---")
     stats = client.get_stats(today)
-    resumen = {
+    summary = {
         "steps": stats.get("totalSteps"),
         "goal_steps": stats.get("dailyStepGoal"),
         "calories_total": stats.get("totalKilocalories"),
@@ -58,9 +59,9 @@ def main():
         "resting_hr": stats.get("restingHeartRate"),
         "floors_climbed": stats.get("floorsAscended"),
     }
-    print(json.dumps(resumen, indent=2, ensure_ascii=False))
+    print(json.dumps(summary, indent=2, ensure_ascii=False))
 
-    print("\n--- Últimas actividades ---")
+    print("\n--- Recent activities ---")
     activities = client.get_activities(0, 5)
     for a in activities:
         print(f"- {a.get('activityName')} | {a.get('startTimeLocal')} | "

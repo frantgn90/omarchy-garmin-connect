@@ -1,27 +1,27 @@
-# jfmarve.garmin — widget de Garmin Connect para Omarchy
+# jfmarve.garmin — Garmin Connect widget for Omarchy
 
-Muestra en la barra de [Omarchy](https://omarchy.org/) los pasos del día
-(con objetivo, calorías y frecuencia cardíaca en reposo en el tooltip),
-leyendo tus datos de Garmin Connect.
+Shows today's step count in the [Omarchy](https://omarchy.org/) bar (with
+goal, calories, and resting heart rate in the tooltip), pulled from your
+Garmin Connect data.
 
-Usa la librería no oficial [`garminconnect`](https://github.com/cyberjunky/python-garminconnect).
-No existe una API pública oficial sencilla para uso personal: Garmin Connect
-Health API requiere ser partner empresarial.
+Uses the unofficial [`garminconnect`](https://github.com/cyberjunky/python-garminconnect)
+library. There is no simple official public API for personal use: Garmin
+Connect's Health API requires a business partner agreement.
 
-## Instalación
+## Installation
 
 ```bash
-omarchy plugin add <url-de-este-repo> --enable
+omarchy plugin add <this-repo-url> --enable
 ```
 
-O manualmente:
+Or manually:
 
 ```bash
-git clone <url-de-este-repo> ~/.config/omarchy/plugins/jfmarve.garmin
+git clone <this-repo-url> ~/.config/omarchy/plugins/jfmarve.garmin
 omarchy plugin enable jfmarve.garmin --section center
 ```
 
-Después, crea el entorno virtual con las dependencias:
+Then create the virtualenv with the dependencies:
 
 ```bash
 cd ~/.config/omarchy/plugins/jfmarve.garmin
@@ -29,58 +29,59 @@ python3 -m venv venv
 ./venv/bin/pip install -r requirements.txt
 ```
 
-Y haz login una vez (pide email/contraseña, y código MFA si tu cuenta lo usa):
+And log in once (asks for email/password, and an MFA code if your account uses it):
 
 ```bash
 ./garmin-login
 ```
 
-Esto guarda un token de sesión en `~/.garminconnect` (permisos `600`, solo
-tu usuario puede leerlo). El widget ya debería mostrar tus pasos en la
-barra; si no, `omarchy restart shell`.
+This saves a session token to `~/.garminconnect` (permissions `600`, only
+your user can read it). The widget should now show your steps in the bar;
+if not, run `omarchy restart shell`.
 
-## Uso
+## Usage
 
-- **Clic izquierdo / derecho**: abre Garmin Connect en el navegador.
-- **Clic central**: fuerza un refresco inmediato.
-- **Hover**: tooltip con pasos/objetivo, calorías y frecuencia cardíaca en reposo.
-- Se refresca solo cada 15 minutos.
+- **Left / right click**: opens Garmin Connect in your browser.
+- **Middle click**: forces an immediate refresh.
+- **Hover**: tooltip with steps/goal, calories, and resting heart rate.
+- Refreshes on its own every 15 minutes.
 
-### Cuando la sesión caduca
+### When the session expires
 
-Garmin invalida el token de sesión de vez en cuando. Cuando eso pasa, el
-widget **no desaparece**: en su lugar muestra `⚠ Garmin`. Un clic (cualquier
-botón) abre una terminal flotante y relanza `garmin-login` automáticamente,
-para que puedas reautenticarte sin salir de la barra.
+Garmin invalidates the session token every so often. When that happens, the
+widget **does not disappear**: it shows `⚠ Garmin` instead. Clicking it
+(any button) opens a floating terminal and automatically re-runs
+`garmin-login`, so you can re-authenticate without leaving the bar.
 
-## Seguridad
+## Security
 
-- El email y la contraseña **nunca se guardan en disco**: solo se usan en
-  memoria durante el login interactivo.
-- Lo único persistido es un token OAuth en `~/.garminconnect/garmin_tokens.json`
-  (fuera de esta carpeta, así que nunca se publicará por error si subes este
-  repo a git). No lo compartas ni lo subas a ningún sitio: es equivalente a
-  una sesión iniciada.
-- `venv/` no se versiona (ver `.gitignore`); cada instalación crea la suya
-  con `requirements.txt`.
+- Your email and password are **never saved to disk**: they're only held in
+  memory during the interactive login.
+- The only thing persisted is an OAuth token in
+  `~/.garminconnect/garmin_tokens.json` (outside this folder, so it can
+  never be accidentally published if you push this repo to git). Don't
+  share it or upload it anywhere — it's equivalent to an active session.
+- `venv/` is not versioned (see `.gitignore`); each install creates its own
+  from `requirements.txt`.
 
-## Nota sobre el login (429 Too Many Requests)
+## A note on login rate limiting (429 Too Many Requests)
 
-Desde marzo de 2026 Garmin aplica un rate-limit agresivo (HTTP 429) a las
-estrategias de login "clásicas" de estas librerías no oficiales, a veces
-desde el primer intento. La versión de `garminconnect` fijada en
-`requirements.txt` ya incluye un login alternativo vía "SSO embed widget"
-que lo esquiva automáticamente; si en el futuro vuelve a fallar, revisa si
-hay una versión más reciente de la librería.
+Since March 2026 Garmin has applied aggressive rate limiting (HTTP 429) to
+the "classic" login strategies used by these unofficial libraries,
+sometimes even on the very first attempt. The `garminconnect` version
+pinned in `requirements.txt` already includes an alternative "SSO embed
+widget" login path that bypasses this automatically; if it starts failing
+again in the future, check whether a newer version of the library is
+available.
 
-## Estructura
+## Layout
 
 ```
-manifest.json      # manifiesto del plugin de Omarchy
-BarWidget.qml       # widget de la barra (Quickshell/QML)
-garmin-status        # wrapper -> garmin_status.py (lee datos, JSON por stdout)
+manifest.json      # Omarchy plugin manifest
+BarWidget.qml       # bar widget (Quickshell/QML)
+garmin-status        # wrapper -> garmin_status.py (reads data, JSON on stdout)
 garmin_status.py
-garmin-login          # wrapper -> garmin_login.py (login interactivo/MFA)
+garmin-login          # wrapper -> garmin_login.py (interactive login/MFA)
 garmin_login.py
 requirements.txt
 ```
