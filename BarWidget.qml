@@ -19,11 +19,21 @@ BarWidget {
   property int goal: 0
   property int calories: 0
   property var restingHr: null
+  property real floors: 0
+  property real floorsGoal: 0
+  property var bodyBattery: null
+  property int intensityMinutes: 0
+  property int intensityGoal: 0
+  property var stressLevel: null
+  property string stressQualifier: ""
   property bool hasData: false
   property bool needsLogin: false
 
   property bool panelOpen: false
   readonly property real stepsProgress: goal > 0 ? Math.max(0, Math.min(1, steps / goal)) : 0
+  readonly property real floorsProgress: floorsGoal > 0 ? Math.max(0, Math.min(1, floors / floorsGoal)) : 0
+  readonly property real bodyBatteryProgress: bodyBattery !== null ? Math.max(0, Math.min(1, bodyBattery / 100)) : 0
+  readonly property real intensityProgress: intensityGoal > 0 ? Math.max(0, Math.min(1, intensityMinutes / intensityGoal)) : 0
 
   function refresh() {
     if (!statusProc.running) statusProc.running = true
@@ -69,6 +79,13 @@ BarWidget {
         root.goal = data.goal || 0
         root.calories = data.calories || 0
         root.restingHr = data.restingHr || null
+        root.floors = data.floors || 0
+        root.floorsGoal = data.floorsGoal || 0
+        root.bodyBattery = data.bodyBattery !== undefined ? data.bodyBattery : null
+        root.intensityMinutes = data.intensityMinutes || 0
+        root.intensityGoal = data.intensityGoal || 0
+        root.stressLevel = data.stressLevel !== undefined ? data.stressLevel : null
+        root.stressQualifier = data.stressQualifier || ""
         root.hasData = true
         root.needsLogin = false
       }
@@ -101,13 +118,48 @@ BarWidget {
     }
   }
 
+  // A labeled row plus a horizontal fill bar, for any metric expressed as a
+  // fraction of a goal (steps, floors, body battery, intensity minutes).
+  component MetricBar: Column {
+    id: metricBar
+    property string label: ""
+    property real progress: 0
+    width: parent ? parent.width : 0
+    spacing: Style.space(4)
+
+    Text {
+      text: metricBar.label
+      color: Color.popups.text
+      font.family: root.bar ? root.bar.fontFamily : Style.font.family
+      font.pixelSize: Style.font.caption
+    }
+
+    Rectangle {
+      width: parent.width
+      height: Style.space(8)
+      radius: height / 2
+      color: Util.alpha(Color.popups.text, 0.15)
+
+      Rectangle {
+        width: parent.width * metricBar.progress
+        height: parent.height
+        radius: parent.radius
+        color: Color.accent
+
+        Behavior on width {
+          NumberAnimation { duration: 160; easing.type: Easing.OutCubic }
+        }
+      }
+    }
+  }
+
   PopupCard {
     id: detailsPopup
     anchorItem: button
     owner: root
     bar: root.bar
     open: root.panelOpen
-    contentWidth: detailsPopup.fittedContentWidth(Style.space(220))
+    contentWidth: detailsPopup.fittedContentWidth(Style.space(230))
     contentHeight: detailsPopup.fittedContentHeight(detailsColumn.implicitHeight)
 
     Column {
@@ -123,34 +175,27 @@ BarWidget {
         font.bold: true
       }
 
-      Column {
-        width: parent.width
-        spacing: Style.space(4)
+      MetricBar {
+        label: "👣 Steps: " + root.steps + " / " + root.goal
+        progress: root.stepsProgress
+      }
 
-        Text {
-          text: "👣 Steps: " + root.steps + " / " + root.goal
-          color: Color.popups.text
-          font.family: root.bar ? root.bar.fontFamily : Style.font.family
-          font.pixelSize: Style.font.caption
-        }
+      MetricBar {
+        visible: root.floorsGoal > 0
+        label: "🪜 Floors: " + root.floors.toFixed(1) + " / " + root.floorsGoal
+        progress: root.floorsProgress
+      }
 
-        Rectangle {
-          width: parent.width
-          height: Style.space(8)
-          radius: height / 2
-          color: Util.alpha(Color.popups.text, 0.15)
+      MetricBar {
+        visible: root.bodyBattery !== null
+        label: "🔋 Body Battery: " + root.bodyBattery + " / 100"
+        progress: root.bodyBatteryProgress
+      }
 
-          Rectangle {
-            width: parent.width * root.stepsProgress
-            height: parent.height
-            radius: parent.radius
-            color: Color.accent
-
-            Behavior on width {
-              NumberAnimation { duration: 160; easing.type: Easing.OutCubic }
-            }
-          }
-        }
+      MetricBar {
+        visible: root.intensityGoal > 0
+        label: "⏱ Intensity (week): " + root.intensityMinutes + " / " + root.intensityGoal + " min"
+        progress: root.intensityProgress
       }
 
       Text {
@@ -161,8 +206,16 @@ BarWidget {
       }
 
       Text {
-        visible: root.restingHr !== null && root.restingHr !== undefined
+        visible: root.restingHr !== null
         text: "❤ Resting HR: " + root.restingHr + " bpm"
+        color: Color.popups.text
+        font.family: root.bar ? root.bar.fontFamily : Style.font.family
+        font.pixelSize: Style.font.caption
+      }
+
+      Text {
+        visible: root.stressLevel !== null
+        text: "😣 Stress: " + root.stressLevel + (root.stressQualifier ? " (" + root.stressQualifier + ")" : "")
         color: Color.popups.text
         font.family: root.bar ? root.bar.fontFamily : Style.font.family
         font.pixelSize: Style.font.caption

@@ -41,13 +41,36 @@ def main():
         "caloriesActive": int(stats.get("activeKilocalories") or 0),
         "restingHr": stats.get("restingHeartRate"),
         "floors": stats.get("floorsAscended"),
+        "floorsGoal": stats.get("userFloorsAscendedGoal"),
+        "bodyBattery": stats.get("bodyBatteryMostRecentValue"),
+        "stressLevel": stats.get("averageStressLevel"),
+        "stressQualifier": stats.get("stressQualifier"),
     }
+
+    # Weekly aggregate, not part of get_stats(): a day with 0 minutes doesn't
+    # mean the week's progress is 0, so this needs its own call. Non-fatal if
+    # it fails -- the rest of the widget still has plenty to show.
+    try:
+        today = datetime.date.today()
+        week_start = today - datetime.timedelta(days=today.weekday())
+        week_end = week_start + datetime.timedelta(days=6)
+        weekly = client.get_weekly_intensity_minutes(week_start.isoformat(), week_end.isoformat())
+        if weekly:
+            latest = weekly[-1]
+            moderate = latest.get("moderateValue") or 0
+            vigorous = latest.get("vigorousValue") or 0
+            data["intensityMinutes"] = moderate + 2 * vigorous
+            data["intensityGoal"] = latest.get("weeklyGoal")
+    except Exception:
+        pass
 
     if "--summary" in sys.argv:
         lines = [f"Steps: {data['steps']} / {data['goal']}",
                  f"Calories: {data['calories']} kcal"]
         if data["restingHr"]:
             lines.append(f"Resting HR: {data['restingHr']} bpm")
+        if data["bodyBattery"] is not None:
+            lines.append(f"Body Battery: {data['bodyBattery']}/100")
         print("\n".join(lines))
     else:
         print(json.dumps(data))
