@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "jfmarve.garmin",
+  "name": "Garmin",
+  "version": "1.0.0",
+  "author": "jfmarve",
+  "description": "Pasos, calorias y frecuencia cardiaca en reposo desde Garmin Connect",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "BarWidget.qml"
+  },
+  "barWidget": {
+    "displayName": "Garmin",
+    "description": "Pasos, calorias y frecuencia cardiaca en reposo desde Garmin Connect",
+    "category": "Info",
+    "allowMultiple": false
+  }
+}
