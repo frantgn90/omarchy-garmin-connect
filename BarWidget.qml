@@ -22,6 +22,9 @@ BarWidget {
   property bool hasData: false
   property bool needsLogin: false
 
+  property bool panelOpen: false
+  readonly property real stepsProgress: goal > 0 ? Math.max(0, Math.min(1, steps / goal)) : 0
+
   function refresh() {
     if (!statusProc.running) statusProc.running = true
   }
@@ -33,6 +36,9 @@ BarWidget {
   function reLogin() {
     if (root.bar) root.bar.run("omarchy-launch-floating-terminal-with-presentation " + Util.shellQuote(root.loginScriptPath))
   }
+
+  // Contract PopupCard's outside-click dismissal relies on (`owner.close()`).
+  function close() { panelOpen = false }
 
   // Visible once we have real numbers to show, and also while login is
   // needed -- that state is exactly what the user must not miss.
@@ -86,13 +92,81 @@ BarWidget {
     horizontalMargin: 6
     tooltipText: root.needsLogin
       ? "Garmin session expired. Click to re-authenticate (a terminal will open)."
-      : "Steps: " + root.steps + " / " + root.goal
-        + "\nCalories: " + root.calories + " kcal"
-        + (root.restingHr ? ("\nResting HR: " + root.restingHr + " bpm") : "")
+      : "Left click: details · Right click: open Garmin Connect"
     onPressed: function(b) {
       if (root.needsLogin) { root.reLogin(); return }
       if (b === Qt.MiddleButton) root.refresh()
-      else root.openGarmin()
+      else if (b === Qt.RightButton) root.openGarmin()
+      else root.panelOpen = !root.panelOpen
+    }
+  }
+
+  PopupCard {
+    id: detailsPopup
+    anchorItem: button
+    owner: root
+    bar: root.bar
+    open: root.panelOpen
+    contentWidth: detailsPopup.fittedContentWidth(Style.space(220))
+    contentHeight: detailsPopup.fittedContentHeight(detailsColumn.implicitHeight)
+
+    Column {
+      id: detailsColumn
+      anchors.fill: parent
+      spacing: Style.space(10)
+
+      Text {
+        text: "Garmin"
+        color: Color.popups.text
+        font.family: root.bar ? root.bar.fontFamily : Style.font.family
+        font.pixelSize: Style.font.body
+        font.bold: true
+      }
+
+      Column {
+        width: parent.width
+        spacing: Style.space(4)
+
+        Text {
+          text: "Steps: " + root.steps + " / " + root.goal
+          color: Color.popups.text
+          font.family: root.bar ? root.bar.fontFamily : Style.font.family
+          font.pixelSize: Style.font.caption
+        }
+
+        Rectangle {
+          width: parent.width
+          height: Style.space(8)
+          radius: height / 2
+          color: Util.alpha(Color.popups.text, 0.15)
+
+          Rectangle {
+            width: parent.width * root.stepsProgress
+            height: parent.height
+            radius: parent.radius
+            color: Color.accent
+
+            Behavior on width {
+              NumberAnimation { duration: 160; easing.type: Easing.OutCubic }
+            }
+          }
+        }
+      }
+
+      Text {
+        text: "Calories: " + root.calories + " kcal"
+        color: Color.popups.text
+        font.family: root.bar ? root.bar.fontFamily : Style.font.family
+        font.pixelSize: Style.font.caption
+      }
+
+      Text {
+        visible: root.restingHr !== null && root.restingHr !== undefined
+        text: "Resting HR: " + root.restingHr + " bpm"
+        color: Color.popups.text
+        font.family: root.bar ? root.bar.fontFamily : Style.font.family
+        font.pixelSize: Style.font.caption
+      }
     }
   }
 }
