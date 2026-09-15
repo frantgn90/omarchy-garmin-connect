@@ -44,7 +44,7 @@ BarWidget {
   }
 
   function reLogin() {
-    if (root.bar) root.bar.run("omarchy-launch-floating-terminal-with-presentation " + Util.shellQuote(root.loginScriptPath))
+    if (!reLoginProc.running) reLoginProc.running = true
   }
 
   // Contract PopupCard's outside-click dismissal relies on (`owner.close()`).
@@ -100,6 +100,18 @@ BarWidget {
     onTriggered: root.refresh()
   }
 
+  // Runs garmin-login in a floating terminal (unlike bar.run, which is
+  // fire-and-forget, this lets us react once the terminal closes). The
+  // presentation wrapper waits for a keypress on its "Done!" screen, so
+  // this fires right after the user acknowledges a finished login --
+  // exactly when it's worth checking again instead of waiting up to 15
+  // minutes for the next scheduled poll.
+  Process {
+    id: reLoginProc
+    command: ["omarchy-launch-floating-terminal-with-presentation", root.loginScriptPath]
+    onExited: root.refresh()
+  }
+
   WidgetButton {
     id: button
     anchors.fill: parent
@@ -108,12 +120,12 @@ BarWidget {
     fontSize: Style.font.caption
     horizontalMargin: 6
     tooltipText: root.needsLogin
-      ? "Garmin session expired. Click to re-authenticate (a terminal will open)."
+      ? "Garmin session expired. Click to re-authenticate · middle click to check again."
       : "Left click: details · Right click: open Garmin Connect"
     onPressed: function(b) {
+      if (b === Qt.MiddleButton) { root.refresh(); return }
       if (root.needsLogin) { root.reLogin(); return }
-      if (b === Qt.MiddleButton) root.refresh()
-      else if (b === Qt.RightButton) root.openGarmin()
+      if (b === Qt.RightButton) root.openGarmin()
       else root.panelOpen = !root.panelOpen
     }
   }
