@@ -22,23 +22,21 @@ git clone https://github.com/frantgn90/omarchy-garmin-connect.git ~/.config/omar
 omarchy plugin enable garmin.connect --section center
 ```
 
-Then create the virtualenv with the dependencies:
+Then log in once (asks for email/password, and an MFA code if your account
+uses it):
 
 ```bash
 cd ~/.config/omarchy/plugins/garmin.connect
-python3 -m venv venv
-./venv/bin/pip install -r requirements.txt
-```
-
-And log in once (asks for email/password, and an MFA code if your account uses it):
-
-```bash
 ./garmin-login
 ```
 
-This saves a session token to `~/.garminconnect` (permissions `600`, only
-your user can read it). The widget should now show your steps in the bar;
-if not, run `omarchy restart shell`.
+The first run of `garmin-login` (or of the widget itself) sets up a local
+Python virtualenv automatically — nothing to install by hand. Login saves
+a session token to `~/.garminconnect` (permissions `600`, only your user
+can read it). The widget should now show your steps in the bar; if not,
+run `omarchy restart shell`.
+
+Requires Python 3 with the `venv` module (included by default on Arch/Omarchy).
 
 ## Usage
 
@@ -102,6 +100,7 @@ garmin-status        # wrapper -> garmin_status.py (reads data, JSON on stdout)
 garmin_status.py
 garmin-login          # wrapper -> garmin_login.py (interactive login/MFA)
 garmin_login.py
+_ensure_venv.sh        # shared by both wrappers: bootstraps venv/ on first run
 requirements.txt
 ```
 
