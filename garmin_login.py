@@ -64,9 +64,31 @@ class Spinner:
     def resume(self):
         self._paused.clear()
 
+    class _ClearingStream:
+        """Wraps a stream so anything written to it (e.g. garminconnect's own
+        logging.warning() calls, which land on stderr) clears the spinner's
+        line first instead of getting appended after it mid-line."""
+
+        def __init__(self, spinner, real):
+            self._spinner = spinner
+            self._real = real
+
+        def write(self, s):
+            if s:
+                self._spinner._clear_line()
+            return self._real.write(s)
+
+        def flush(self):
+            self._real.flush()
+
+        def isatty(self):
+            return self._real.isatty()
+
     def __enter__(self):
         if self._thread:
             Spinner.active = self
+            self._real_stderr = sys.stderr
+            sys.stderr = self._ClearingStream(self, self._real_stderr)
             self._thread.start()
         else:
             print(self.message)
@@ -76,6 +98,7 @@ class Spinner:
         if self._thread:
             self._stop.set()
             self._thread.join()
+            sys.stderr = self._real_stderr
             self._clear_line()
             Spinner.active = None
 
