@@ -21,6 +21,12 @@ import garminconnect
 
 TOKEN_DIR = "~/.garminconnect"
 
+# Garmin has rate-limited the "mobile" login endpoints (HTTP 429) since
+# March 2026, so the library's default strategy chain always burns two
+# guaranteed failures before falling back to the one that works. Skip
+# straight to it; revisit if Garmin ever lifts the block.
+SKIP_LOGIN_STRATEGIES = {"mobile+cffi", "mobile+requests"}
+
 
 def prompt_mfa():
     return input("MFA code received (email/SMS): ")
@@ -30,6 +36,7 @@ def login():
     if os.path.isdir(os.path.expanduser(TOKEN_DIR)):
         try:
             client = garminconnect.Garmin(prompt_mfa=prompt_mfa)
+            client.client.skip_strategies = SKIP_LOGIN_STRATEGIES
             client.login(TOKEN_DIR)
             print("Session resumed from saved token.")
             return client
@@ -39,6 +46,7 @@ def login():
     email = input("Garmin Connect email: ")
     password = getpass.getpass("Password: ")
     client = garminconnect.Garmin(email, password, prompt_mfa=prompt_mfa)
+    client.client.skip_strategies = SKIP_LOGIN_STRATEGIES
     client.login(TOKEN_DIR)
     print("Login OK, token saved to", TOKEN_DIR)
     return client

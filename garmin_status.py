@@ -18,10 +18,17 @@ import garminconnect
 
 TOKEN_DIR = "~/.garminconnect"
 
+# Garmin has rate-limited the "mobile" login endpoints (HTTP 429) since
+# March 2026, so the library's default strategy chain always burns two
+# guaranteed failures before falling back to the one that works. Skip
+# straight to it; revisit if Garmin ever lifts the block.
+SKIP_LOGIN_STRATEGIES = {"mobile+cffi", "mobile+requests"}
+
 
 def main():
     try:
         client = garminconnect.Garmin()
+        client.client.skip_strategies = SKIP_LOGIN_STRATEGIES
         client.login(TOKEN_DIR)
         stats = client.get_stats(datetime.date.today().isoformat())
     except garminconnect.GarminConnectAuthenticationError as e:
