@@ -6,9 +6,9 @@ import qs.Ui
 
 BarWidget {
   id: root
-  moduleName: "jfmarve.garmin"
+  moduleName: "garmin.connect"
 
-  readonly property string pluginDir: Quickshell.env("HOME") + "/.config/omarchy/plugins/jfmarve.garmin"
+  readonly property string pluginDir: Quickshell.env("HOME") + "/.config/omarchy/plugins/garmin.connect"
   readonly property string scriptPath: pluginDir + "/garmin-status"
   readonly property string loginScriptPath: pluginDir + "/garmin-login"
 

@@ -1,4 +1,4 @@
-# jfmarve.garmin — Garmin Connect widget for Omarchy
+# garmin.connect — an Omarchy bar widget for Garmin Connect
 
 Shows today's step count in the [Omarchy](https://omarchy.org/) bar. Click
 it for a details panel with steps, floors, Body Battery, weekly intensity
@@ -18,14 +18,14 @@ omarchy plugin add <this-repo-url> --enable
 Or manually:
 
 ```bash
-git clone <this-repo-url> ~/.config/omarchy/plugins/jfmarve.garmin
-omarchy plugin enable jfmarve.garmin --section center
+git clone <this-repo-url> ~/.config/omarchy/plugins/garmin.connect
+omarchy plugin enable garmin.connect --section center
 ```
 
 Then create the virtualenv with the dependencies:
 
 ```bash
-cd ~/.config/omarchy/plugins/jfmarve.garmin
+cd ~/.config/omarchy/plugins/garmin.connect
 python3 -m venv venv
 ./venv/bin/pip install -r requirements.txt
 ```
