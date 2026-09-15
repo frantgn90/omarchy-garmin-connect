@@ -22,19 +22,15 @@ git clone https://github.com/frantgn90/omarchy-garmin-connect.git ~/.config/omar
 omarchy plugin enable garmin.connect --section center
 ```
 
-Then log in once (asks for email/password, and an MFA code if your account
-uses it):
+That's it — nothing to install by hand. Since you're not logged in yet,
+the widget shows `⚠ Garmin` in the bar; click it to log in (a terminal
+opens asking for your email/password, and an MFA code if your account
+uses it). It saves a session token to `~/.garminconnect` (permissions
+`600`, only your user can read it) and switches to showing your steps.
 
-```bash
-cd ~/.config/omarchy/plugins/garmin.connect
-./garmin-login
-```
-
-The first run of `garmin-login` (or of the widget itself) sets up a local
-Python virtualenv automatically — nothing to install by hand. Login saves
-a session token to `~/.garminconnect` (permissions `600`, only your user
-can read it). The widget should now show your steps in the bar; if not,
-run `omarchy restart shell`.
+If you'd rather log in from a plain terminal instead of clicking the
+widget, `cd` into the plugin folder and run `./garmin-login` directly —
+same script, same result.
 
 Requires Python 3 with the `venv` module (included by default on Arch/Omarchy).
 
