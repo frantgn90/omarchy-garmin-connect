@@ -12,13 +12,13 @@ Connect's Health API requires a business partner agreement.
 ## Installation
 
 ```bash
-omarchy plugin add <this-repo-url> --enable
+omarchy plugin add https://github.com/frantgn90/omarchy-garmin-connect.git --enable
 ```
 
 Or manually:
 
 ```bash
-git clone <this-repo-url> ~/.config/omarchy/plugins/garmin.connect
+git clone https://github.com/frantgn90/omarchy-garmin-connect.git ~/.config/omarchy/plugins/garmin.connect
 omarchy plugin enable garmin.connect --section center
 ```
 
