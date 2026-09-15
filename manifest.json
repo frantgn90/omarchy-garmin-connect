@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "id": "garmin.connect",
   "name": "Garmin",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": "jfmarve",
-  "description": "Steps, calories and resting heart rate from Garmin Connect",
+  "description": "Steps, floors, Body Battery, intensity minutes, calories, resting HR and stress from Garmin Connect",
   "kinds": [
     "bar-widget"
   ],
@@ -13,7 +13,7 @@
   },
   "barWidget": {
     "displayName": "Garmin",
-    "description": "Steps, calories and resting heart rate from Garmin Connect",
+    "description": "Steps, floors, Body Battery, intensity minutes, calories, resting HR and stress from Garmin Connect",
     "category": "Info",
     "allowMultiple": false
   }

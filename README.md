@@ -57,6 +57,21 @@ widget **does not disappear**: it shows `⚠ Garmin` instead. Clicking it
 (any button) opens a floating terminal and automatically re-runs
 `garmin-login`, so you can re-authenticate without leaving the bar.
 
+## Uninstall
+
+```bash
+omarchy plugin disable garmin.connect
+omarchy plugin remove garmin.connect
+```
+
+`omarchy plugin remove` deletes this plugin folder (including the local
+`venv/`). It does **not** touch `~/.garminconnect/garmin_tokens.json` —
+remove that yourself too if you want to fully revoke the saved session:
+
+```bash
+rm -rf ~/.garminconnect
+```
+
 ## Security
 
 - Your email and password are **never saved to disk**: they're only held in
@@ -89,3 +104,7 @@ garmin-login          # wrapper -> garmin_login.py (interactive login/MFA)
 garmin_login.py
 requirements.txt
 ```
+
+## License
+
+[MIT](LICENSE)
