@@ -58,12 +58,13 @@ omarchy plugin disable garmin.connect
 omarchy plugin remove garmin.connect
 ```
 
-`omarchy plugin remove` deletes this plugin folder (including the local
-`venv/`). It does **not** touch `~/.garminconnect/garmin_tokens.json` —
-remove that yourself too if you want to fully revoke the saved session:
+`omarchy plugin remove` deletes this plugin folder, but not the two things
+kept outside it — the virtualenv and the saved session. Remove those too if
+you want to reclaim the space and fully revoke the session:
 
 ```bash
-rm -rf ~/.garminconnect
+rm -rf ~/.local/share/garmin.connect   # virtualenv
+rm -rf ~/.garminconnect                # saved OAuth session token
 ```
 
 ## Security
@@ -74,8 +75,10 @@ rm -rf ~/.garminconnect
   `~/.garminconnect/garmin_tokens.json` (outside this folder, so it can
   never be accidentally published if you push this repo to git). Don't
   share it or upload it anywhere — it's equivalent to an active session.
-- `venv/` is not versioned (see `.gitignore`); each install creates its own
-  from `requirements.txt`, which pins exact versions and SHA-256 hashes for
+- The virtualenv is built at `~/.local/share/garmin.connect/venv` on first
+  run — deliberately outside the plugin folder, which the Omarchy shell
+  watches recursively and reloads on any file change. It is installed from
+  `requirements.txt`, which pins exact versions and SHA-256 hashes for
   `garminconnect` and every transitive dependency, installed with
   `pip install --require-hashes`. This is what actually receives your
   Garmin email/password/MFA code/session token, so a compromised or

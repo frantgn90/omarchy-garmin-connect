@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$dir/_ensure_venv.sh"
-exec "$dir/venv/bin/python" "$dir/garmin_status.py" "$@"
+exec "$venv/bin/python" "$dir/garmin_status.py" "$@"
